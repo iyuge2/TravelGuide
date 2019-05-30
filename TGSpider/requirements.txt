@@ -1,0 +1,4 @@
+elasticsearch==7.0.0
+requests==2.20.0
+Scrapy==1.6.0
+beautifulsoup4==4.7.1
