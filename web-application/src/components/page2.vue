@@ -8,6 +8,15 @@
       <br>
       <div class="row clearfix">
         <div class="col-md-2 column">
+          <!-- 搜索方式 -->
+          <p>
+            <strong>搜索方式</strong>
+          </p>
+          <select class="btn btn-defaul" v-model="choose.searchMode">
+            <option v-for="i in MODE" :key="i">{{i}}</option>
+          </select>
+          <br>
+          <br>
           <!-- 选择排序 -->
           <p>
             <strong>排序方式</strong>
@@ -105,14 +114,17 @@ export default {
     return {
       raw_guides: [],
       choose: {
+        searchMode: "综合搜索",
         sortMode: "综合排序",
         daysBegin: 0,
         daysEnd: 1000,
         monthBegin: 1,
         monthEnd: 12
       },
+      MODE: ["综合搜索", "地点搜索", "标题搜索", "概要搜索", "作者搜索"],
+      // MODE: ["综合搜索"],
       MONTH: ALLMONTH,
-      mysearch: ''
+      mysearch: ""
     };
   },
   props: ["searchcontent"],
@@ -165,13 +177,34 @@ export default {
           break;
       }
       return guides_tmp;
+    },
+    searchParam: function(){
+      let param = "";
+      switch(this.choose.searchMode){
+        case "综合搜索":
+          param = '{ "query": {"bool": { "must": [{ "match": { "city_name": "'+this.mysearch+'" } }, { "match": { "title": "'  + this.mysearch +'" } }, { "match": { "outline": "' + this.mysearch + '" } }], "should": [ {"match": {"outline": "' + this.mysearch + '"}}] }},"size":10000}';
+          break;
+        case "地点搜索":
+          param = '{ "query": {"bool": { "must": [{ "match": { "city_name": "'  + this.mysearch +'" } }] }},"size":10000}';
+          break;
+        case "标题搜索":
+          param = '{ "query": {"bool": { "should": [{ "match": { "title": "'  + this.mysearch +'" } }] }},"size":10000}';
+          break;
+        case "概要搜索":
+          param = '{ "query": {"bool": { "should": [{ "match": { "outline": "'  + this.mysearch +'" } }] }},"size":10000}';
+          break;
+        case "作者搜索":
+          param = '{ "query": {"bool": { "should": [{ "match": { "author": "'  + this.mysearch +'" } }] }},"size":10000}';
+          break;
+        default:
+          break;
+      }
+      return param;
     }
   },
   watch: {
-    mysearch: function(){
-      // 一般查询
-      let param = '{ "query": {"bool": { "must": [{ "match": { "city_name": "'+this.mysearch+'" } }, { "match": { "title": "'  + this.mysearch +'" } }, { "match": { "outline": "' + this.mysearch + '" } }], "should": [ {"match": {"outline": "' + this.mysearch + '"}}, {"match": {"author": ""}} ] }},"size":1000}';
-      getElasticDate(param).then((res) => {
+    searchParam: function(){
+      getElasticDate(this.searchParam).then((res) => {
         this.raw_guides = res.data.hits.hits;
       });
     }
