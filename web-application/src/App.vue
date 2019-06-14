@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view @startSearch="getSearch" v-bind:searchcontent="searchtext"></router-view>
+    <router-view @startSearch="getSearch" v-bind:indexSearch="searchtext"></router-view>
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
   </div>
 </template>

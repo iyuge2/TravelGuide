@@ -1,8 +1,11 @@
 <template>
   <!-- 搜索内容展示 -->
   <div class="col-md-9 column">
-    <p v-if="guides.length == 0">很抱歉，没有找到与<strong style="color: red">"{{searchtext}}"</strong>相关的结果<br>
+    <p v-if="guides.length == 0 && !isrequest">很抱歉，没有找到与<strong style="color: red">"{{searchtext}}"</strong>相关的结果<br>
     请检查<strong style="color: red">搜索条件</strong>或者<strong style="color: red">换一个搜索句</strong>进行搜索...</p>
+    <p v-if="guides.length == 0 && isrequest">
+    <img src="../assets/Searching.gif">
+    </p>
     <p v-if="guides.length != 0">共 {{page_num}} 页, {{guides.length}}个结果</p>
     <ul class="list-group">
       <!-- <li class="list-group-item" style="width: 800px"> -->
@@ -79,7 +82,7 @@ export default {
       cur_page_num: 0 //当前第几页
     };
   },
-  props: ["guides", "searchtext"],
+  props: ["guides", "searchtext", "isrequest"],
   computed: {
     page_num: function(){ // 攻略总页数
       return Math.round(this.guides.length / ITEMS_PER_PAGE);

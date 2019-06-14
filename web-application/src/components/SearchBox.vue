@@ -35,7 +35,7 @@ export default {
     };
   },
   props: ['searchfor'],
-  created: function(){
+  updated: function(){
     this.searchtext = this.searchfor;
   },
   methods: {
